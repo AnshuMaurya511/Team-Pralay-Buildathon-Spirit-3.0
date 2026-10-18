@@ -1,0 +1,8 @@
+{
+  "framework": "express",
+  "functions": {
+    "src/server.ts": {
+      "maxDuration": 30
+    }
+  }
+}

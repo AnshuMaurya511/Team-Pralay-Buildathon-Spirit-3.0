@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+model User {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  passwordHash String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cases FraudCase[]
+  tasks Task[]
+  supportTickets SupportTicket[]
+}
+model FraudCase {
+  id String @id @default(cuid())
+  reference String @unique
+  title String
+  type String
+  description String
+  incidentDate DateTime?
+  mode String?
+  platform String?
+  amount Decimal @default(0) @db.Decimal(12, 2)
+  priority String @default("High")
+  status String @default("In Progress")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evidence Evidence[]
+  timeline TimelineEvent[]
+  tasks Task[]
+  @@index([userId, updatedAt])
+}
+model Evidence {
+  id String @id @default(cuid())
+  caseId String
+  case FraudCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  originalName String
+  mimeType String
+  sizeBytes Int
+  storageProvider String
+  storageKey String
+  createdAt DateTime @default(now())
+  @@index([caseId, createdAt])
+}
+model TimelineEvent {
+  id String @id @default(cuid())
+  caseId String
+  case FraudCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  title String
+  detail String?
+  eventAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  @@index([caseId, eventAt])
+}
+model Task {
+  id String @id @default(cuid())
+  title String
+  description String?
+  dueDate DateTime?
+  status String @default("Pending")
+  priority String @default("Medium")
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  caseId String?
+  case FraudCase? @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId, dueDate])
+}
+model SupportTicket {
+  id String @id @default(cuid())
+  subject String
+  message String
+  status String @default("Open")
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}

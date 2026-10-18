@@ -1,0 +1,1 @@
+export default {content:["./index.html","./src/**/*.{js,ts,jsx,tsx}"],theme:{extend:{colors:{rx:{forest:"#174d40",deep:"#123b35",ivory:"#f7f4ec",sage:"#e6eee5",terra:"#c94f2d",ink:"#183a3a",muted:"#5d6d70",line:"#d8ded6"}},fontFamily:{sans:["DM Sans","sans-serif"],display:["DM Serif Display","Georgia","serif"]}}},plugins:[]};
